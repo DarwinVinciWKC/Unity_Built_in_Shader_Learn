@@ -2,7 +2,7 @@
 
 // Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
 
-Shader "UnityTrain/VF7" {
+Shader "UnityTrain/Vertex/VF7" {
     SubShader {
         Pass {
             CGPROGRAM

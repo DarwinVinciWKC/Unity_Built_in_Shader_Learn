@@ -1,5 +1,5 @@
 // Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
-Shader "UnityTrain/VF6" {
+Shader "UnityTrain/Vertex/VF6" {
     SubShader {
         Pass {
             CGPROGRAM

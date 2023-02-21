@@ -1,4 +1,4 @@
-Shader "UnityTrain/VF9" {
+Shader "UnityTrain/Vertex/VF9" {
     Properties {
         _Radius ("Radius", Range(0, 5)) = 1
         _Hight ("Hight", Range(0, 3)) = 1

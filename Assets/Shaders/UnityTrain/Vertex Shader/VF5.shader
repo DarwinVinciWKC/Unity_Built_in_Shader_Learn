@@ -1,4 +1,4 @@
-﻿Shader "UnityTrain/VF5" {
+﻿Shader "UnityTrain/Vertex/VF5" {
     Properties {
         _MainColor ("Main Color", COLOR) = (0, 0, 1, 1)
     }

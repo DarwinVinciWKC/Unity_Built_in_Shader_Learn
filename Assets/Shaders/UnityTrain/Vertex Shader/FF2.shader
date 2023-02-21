@@ -1,4 +1,4 @@
-﻿Shader "UnityTrain/FF2" {
+﻿Shader "UnityTrain/Vertex/FF2" {
     Properties {
         _Color ("Main Color", Color) = (1, 1, 1, 1)
         _Ambient ("Ambient", Color) = (0.3, 0.3, 0.3, 0.3)

@@ -1,4 +1,4 @@
-﻿Shader "UnityTrain/VF3" {
+﻿Shader "UnityTrain/Vertex/VF3" {
     SubShader {
 
         Pass {

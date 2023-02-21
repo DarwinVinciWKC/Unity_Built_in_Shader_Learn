@@ -1,4 +1,4 @@
-﻿Shader "UnityTrain/SF" {//Surface Shader
+﻿Shader "UnityTrain/Vertex/SF" {//Surface Shader
     Properties {
         //除了要在此处做属性声明之外，还需要在CGPROGRAM中做对应的声明，但类型表示方式方式不一样
         _Color ("Color", Color) = (1, 1, 1, 1)

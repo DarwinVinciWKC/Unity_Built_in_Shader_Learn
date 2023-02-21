@@ -1,4 +1,4 @@
-﻿Shader "UnityTrain/VF2" {
+﻿Shader "UnityTrain/Vertex/VF2" {
     SubShader {
         Pass {
             CGPROGRAM
