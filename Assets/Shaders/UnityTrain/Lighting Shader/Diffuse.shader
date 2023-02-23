@@ -1,9 +1,12 @@
 // Upgrade NOTE: replaced '_Object2World' with 'unity_ObjectToWorld'
 
+// Upgrade NOTE: replaced '_Object2World' with 'unity_ObjectToWorld'
+
 Shader "UnityTrain/Lighting/Diffuse" {
     SubShader {
         Pass {
-            tags { "LightModel" = "ForwardBase" }//?
+            //tags { "LightMode" = "Vertex" }//?
+            tags { "LightMode" = "ForwardBase" }//?
 
             CGPROGRAM
             #pragma vertex vert
@@ -33,18 +36,30 @@ Shader "UnityTrain/Lighting/Diffuse" {
                 *1.将模型的法向量转换到世界坐标中；
                 *2.将光向量转换到模型坐标中；
                 ******************************************************/
-                n = mul(unity_ObjectToWorld, n);//*1
+                //n = mul(unity_ObjectToWorld, n);//*1 当非等比缩放时无法得到正确的光照
                 //l = mul(unity_WorldToObject, l);//*2
-                 /******************************************************
-                 unity_ObjectToWorld与unity_WorldToObject互为逆矩阵
-                 在非等比缩放中，法向量模型到世界空间的转换得不到正确的变换，
-                 解决方法：
-                 使用unity_ObjectToWorld的逆矩阵的转置变换法向量
+                /******************************************************
+                unity_ObjectToWorld与unity_WorldToObject互为逆矩阵
+                在非等比缩放中，法向量模型到世界空间的转换得不到正确的变换，
+                解决方法：
+                使用unity_ObjectToWorld的逆矩阵的转置变换法向量
                 ******************************************************/
+                n = mul(n, unity_WorldToObject);
+                n = normalize(n);
 
                 float d = saturate(dot(n, l)) ;
                 
                 o.col = _LightColor0 * d;
+
+                //o.col.rgb = ShadeVertexLights(v.vertex, v.normal);//Vertex
+                float4 wpos = mul(unity_ObjectToWorld, v.vertex);
+                o.col.rgb += Shade4PointLights
+                (
+                    unity_4LightPosX0, unity_4LightPosY0, unity_4LightPosZ0,
+                    unity_LightColor[0].rgb, unity_LightColor[1].rgb, unity_LightColor[2].rgb, unity_LightColor[3].rgb,
+                    unity_4LightAtten0,
+                    wpos, n
+                );
 
                 return o;
             }
