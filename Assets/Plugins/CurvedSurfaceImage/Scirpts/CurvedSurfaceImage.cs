@@ -1,21 +1,35 @@
-using System.Collections;
 using System.Collections.Generic;
-using System.Drawing;
-using System.Reflection;
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
 
+[AddComponentMenu("UI/CurvedSurfaceImage")]
 public class CurvedSurfaceImage : Image
 {
+    public new enum Type
+    {
+        Curved,
+        Simple,
+        Sliced,
+        Tiled,
+        Filled
+    }
     [SerializeField]
-    public float curvature = 20;
+    private Type _Type = Type.Curved;
+    [SerializeField]
+    public float m_Curvature = 20;
     float width;
     float height;
-    float Curvature => height * (curvature / 100);
-    protected override void OnPopulateMesh(VertexHelper vh)
+    float Curvature => -height * (m_Curvature / 100);
+    protected override void OnPopulateMesh(VertexHelper toFill)
     {
-        vh.Clear();
+        if (_Type == Type.Curved)
+            GenerateCurvedSprite(toFill);
+        else
+            base.OnPopulateMesh(toFill);
+    }
+    void GenerateCurvedSprite(VertexHelper toFill)
+    {
+        toFill.Clear();
         width = rectTransform.rect.width;
         height = rectTransform.rect.height;
         var xPoint = width / 2;
@@ -34,18 +48,19 @@ public class CurvedSurfaceImage : Image
         List<int> indices = new List<int>();
         for (int i = 0; i < leftLinePoints.Count - 1; i++)
         {
-            indices.Add(i);
             indices.Add(i + leftLinePoints.Count);
             indices.Add(i + 1);
+            indices.Add(i);
         }
         for (int i = rightLinePoints.Count; i < rightLinePoints.Count * 2 - 1; i++)
         {
-            indices.Add(i - leftLinePoints.Count + 1);
-            indices.Add(i + 1);
             indices.Add(i);
+            indices.Add(i + 1);
+            indices.Add(i - leftLinePoints.Count + 1);
         }
-        vh.AddUIVertexStream(vertices, indices);
+        toFill.AddUIVertexStream(vertices, indices);
     }
+
     List<UIVertex> GetUIVertex(List<Vector3> points, float width, float hight)
     {
         List<UIVertex> uiVertices = new List<UIVertex>();
