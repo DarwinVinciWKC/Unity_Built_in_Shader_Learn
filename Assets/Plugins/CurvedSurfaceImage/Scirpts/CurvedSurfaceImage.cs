@@ -17,9 +17,9 @@ public class CurvedSurfaceImage : Image
     private Type _Type = Type.Curved;
     [SerializeField]
     public float m_Curvature = 20;
-    float width;
-    float height;
-    float Curvature => -height * (m_Curvature / 100);
+    float m_Width;
+    float m_Height;
+    float curvature => -m_Height * (m_Curvature / 100);
     protected override void OnPopulateMesh(VertexHelper toFill)
     {
         if (_Type == Type.Curved)
@@ -30,21 +30,25 @@ public class CurvedSurfaceImage : Image
     void GenerateCurvedSprite(VertexHelper toFill)
     {
         toFill.Clear();
-        width = rectTransform.rect.width;
-        height = rectTransform.rect.height;
-        var xPoint = width / 2;
-        var yPoint = height / 2;
+
+        m_Width = rectTransform.rect.width;
+        m_Height = rectTransform.rect.height;
+        var xPoint = m_Width / 2;
+        var yPoint = m_Height / 2;
+
         var leftStartPos = new Vector3(-xPoint, -yPoint);
-        var leftMiddlePos = new Vector3(-xPoint, 0, Curvature);
+        var leftMiddlePos = new Vector3(-xPoint, 0, curvature);
         var leftEndPos = new Vector3(-xPoint, yPoint);
         List<Vector3> leftLinePoints = BezierCurve.GetCurvePoints(new Vector3[] { leftStartPos, leftMiddlePos, leftEndPos }, 0.01f);
         var rightStartPos = new Vector3(xPoint, -yPoint);
-        var rightMiddlePos = new Vector3(xPoint, 0, Curvature);
+        var rightMiddlePos = new Vector3(xPoint, 0, curvature);
         var rightEndPos = new Vector3(xPoint, yPoint);
         List<Vector3> rightLinePoints = BezierCurve.GetCurvePoints(new Vector3[] { rightStartPos, rightMiddlePos, rightEndPos }, 0.01f);
+
         List<UIVertex> vertices = new List<UIVertex>();
-        vertices.AddRange(GetUIVertex(leftLinePoints, width, height));
-        vertices.AddRange(GetUIVertex(rightLinePoints, width, height));
+        vertices.AddRange(GetUIVertex(leftLinePoints, m_Width, m_Height));
+        vertices.AddRange(GetUIVertex(rightLinePoints, m_Width, m_Height));
+
         List<int> indices = new List<int>();
         for (int i = 0; i < leftLinePoints.Count - 1; i++)
         {
@@ -58,6 +62,7 @@ public class CurvedSurfaceImage : Image
             indices.Add(i + 1);
             indices.Add(i - leftLinePoints.Count + 1);
         }
+
         toFill.AddUIVertexStream(vertices, indices);
     }
 
