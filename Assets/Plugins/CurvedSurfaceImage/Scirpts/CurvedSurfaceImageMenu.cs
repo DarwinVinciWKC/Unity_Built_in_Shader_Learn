@@ -12,12 +12,38 @@ public class CurvedSurfaceImageMenu : MonoBehaviour
         print($"<color=lime>CurvedSurfaceImage：调整CurvedSurfaceImage组件的Curvature属性改变图片的弯曲程度</color>");
 
         var activeTransform = Selection.activeTransform;
-
-        var canvas = activeTransform?.GetComponent<Canvas>();
-        GameObject canvasGo;
-        if (canvas?.renderMode == RenderMode.WorldSpace)//好像不可以这样用，还需要向上寻找父物体中有没有Canvas...
-            canvasGo = activeTransform.gameObject;
+        Canvas canvas = null;
+        GameObject canvasGo = null;
+        bool hasCanvas = false;
+        if (activeTransform != null)
+        {
+            canvas = activeTransform.GetComponent<Canvas>();
+            if (canvas != null)
+                hasCanvas = true;
+            else
+            {
+                var parent = activeTransform.parent;
+                while (parent != null)
+                {
+                    if (parent.GetComponent<Canvas>() != null)
+                    {
+                        hasCanvas = true;
+                        break;
+                    }
+                    parent = parent.parent;
+                }
+                hasCanvas = false;
+            }
+        }
         else
+        {
+            hasCanvas = false;
+        }
+        if (hasCanvas && canvas.renderMode == RenderMode.WorldSpace)
+        {
+            canvasGo = activeTransform.gameObject;
+        }
+        if (!hasCanvas)
         {
             canvasGo = new GameObject("Canvas");
             canvasGo.AddComponent<Canvas>();
@@ -25,7 +51,6 @@ public class CurvedSurfaceImageMenu : MonoBehaviour
             canvasGo.AddComponent<GraphicRaycaster>();
             canvasGo.transform.SetParent(activeTransform);
         }
-
         var curvedSurfaceImageGo = new GameObject("CurvedSurfaceImage");
         curvedSurfaceImageGo.transform.SetParent(canvasGo.transform);
         var curvedSurfaceImage = curvedSurfaceImageGo.AddComponent<CurvedSurfaceImage>();
