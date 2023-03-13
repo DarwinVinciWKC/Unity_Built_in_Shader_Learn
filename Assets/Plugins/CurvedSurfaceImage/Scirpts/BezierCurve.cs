@@ -14,9 +14,7 @@ public static class BezierCurve
     {
         List<Vector3> curvePoints = new List<Vector3>();
         for (float t = 0; t <= 1; t += delta)
-        {
             curvePoints.Add(GetBt(controlPoints, t));
-        }
         return curvePoints;
     }
     /// <summary>
@@ -30,9 +28,7 @@ public static class BezierCurve
         int n = controlPoints.Length - 1;
         Vector3 curvePoint = Vector3.zero;
         for (int k = 0; k <= n; k++)
-        {
             curvePoint += Factorial(n) / (Factorial(k) * Factorial(n - k)) * Mathf.Pow(t, k) * Mathf.Pow(1 - t, n - k) * controlPoints[k];
-        }
         return curvePoint;
     }
     /// <summary>
@@ -43,12 +39,8 @@ public static class BezierCurve
     private static int Factorial(int n)
     {
         if (n == 1 || n == 0)
-        {
             return 1;
-        }
         else
-        {
             return n * Factorial(n - 1);
-        }
     }
 }
