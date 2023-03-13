@@ -5,16 +5,6 @@ using UnityEngine.UI;
 [AddComponentMenu("UI/CurvedSurfaceImage")]
 public class CurvedSurfaceImage : Image
 {
-    public new enum Type
-    {
-        Curved,
-        Simple,
-        Sliced,
-        Tiled,
-        Filled
-    }
-    [SerializeField]
-    private Type _Type = Type.Curved;
     [SerializeField]
     public float m_Curvature = 20;
     float m_Width;
@@ -22,15 +12,13 @@ public class CurvedSurfaceImage : Image
     float curvature => -m_Height * (m_Curvature / 100);
     protected override void OnPopulateMesh(VertexHelper toFill)
     {
-        if (_Type == Type.Curved)
-            GenerateCurvedSprite(toFill);
-        else
-            base.OnPopulateMesh(toFill);
+        GenerateCurvedSprite(toFill);
     }
     void GenerateCurvedSprite(VertexHelper toFill)
     {
-        toFill.Clear();
+        var color32 = color;
 
+        toFill.Clear();
         m_Width = rectTransform.rect.width;
         m_Height = rectTransform.rect.height;
         var xPoint = m_Width / 2;
@@ -46,8 +34,8 @@ public class CurvedSurfaceImage : Image
         List<Vector3> rightLinePoints = BezierCurve.GetCurvePoints(new Vector3[] { rightStartPos, rightMiddlePos, rightEndPos }, 0.01f);
 
         List<UIVertex> vertices = new List<UIVertex>();
-        vertices.AddRange(GetUIVertex(leftLinePoints, m_Width, m_Height));
-        vertices.AddRange(GetUIVertex(rightLinePoints, m_Width, m_Height));
+        vertices.AddRange(GetUIVertex(leftLinePoints, color32, m_Width, m_Height));
+        vertices.AddRange(GetUIVertex(rightLinePoints, color32, m_Width, m_Height));
 
         List<int> indices = new List<int>();
         for (int i = 0; i < leftLinePoints.Count - 1; i++)
@@ -66,7 +54,7 @@ public class CurvedSurfaceImage : Image
         toFill.AddUIVertexStream(vertices, indices);
     }
 
-    List<UIVertex> GetUIVertex(List<Vector3> points, float width, float hight)
+    List<UIVertex> GetUIVertex(List<Vector3> points, Color color, float width, float hight)
     {
         List<UIVertex> uiVertices = new List<UIVertex>();
         for (int i = 0; i < points.Count; i++)
