@@ -15,7 +15,7 @@ public class CurvedSurfaceImageMenu : MonoBehaviour
 
         var canvas = activeTransform?.GetComponent<Canvas>();
         GameObject canvasGo;
-        if (canvas?.renderMode == RenderMode.WorldSpace)//好像不可以这样用，还需要向上寻找父物体中有没有Canvas
+        if (canvas?.renderMode == RenderMode.WorldSpace)//好像不可以这样用，还需要向上寻找父物体中有没有Canvas...
             canvasGo = activeTransform.gameObject;
         else
         {
