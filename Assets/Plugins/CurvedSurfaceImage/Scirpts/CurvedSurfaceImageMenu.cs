@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
@@ -9,15 +7,14 @@ public class CurvedSurfaceImageMenu : MonoBehaviour
     [MenuItem("GameObject/UI/CurvedSurfaceImage")]
     static void CreateImage()
     {
-        print($"<color=lime>CurvedSurfaceImage：调整CurvedSurfaceImage组件的Curvature属性改变图片的弯曲程度</color>");
+        print($"<color=aqua>CurvedSurfaceImage：调整CurvedSurfaceImage组件的Curvature属性改变图片的弯曲程度</color>");
 
         var activeTransform = Selection.activeTransform;
-        Canvas canvas = null;
         GameObject canvasGo = null;
         bool hasCanvas = false;
         if (activeTransform != null)
         {
-            canvas = activeTransform.GetComponent<Canvas>();
+            Canvas canvas = activeTransform.GetComponent<Canvas>();
             if (canvas != null)
                 hasCanvas = true;
             else
@@ -25,24 +22,20 @@ public class CurvedSurfaceImageMenu : MonoBehaviour
                 var parent = activeTransform.parent;
                 while (parent != null)
                 {
-                    if (parent.GetComponent<Canvas>() != null)
+                    var currentCanvas = parent.GetComponent<Canvas>();
+                    if (currentCanvas != null)
                     {
                         hasCanvas = true;
                         break;
                     }
                     parent = parent.parent;
                 }
-                hasCanvas = false;
             }
         }
-        else
-        {
-            hasCanvas = false;
-        }
-        if (hasCanvas && canvas.renderMode == RenderMode.WorldSpace)
-        {
+
+        if (hasCanvas)
             canvasGo = activeTransform.gameObject;
-        }
+
         if (!hasCanvas)
         {
             canvasGo = new GameObject("Canvas");
@@ -51,6 +44,7 @@ public class CurvedSurfaceImageMenu : MonoBehaviour
             canvasGo.AddComponent<GraphicRaycaster>();
             canvasGo.transform.SetParent(activeTransform);
         }
+
         var curvedSurfaceImageGo = new GameObject("CurvedSurfaceImage");
         curvedSurfaceImageGo.transform.SetParent(canvasGo.transform);
         var curvedSurfaceImage = curvedSurfaceImageGo.AddComponent<CurvedSurfaceImage>();
