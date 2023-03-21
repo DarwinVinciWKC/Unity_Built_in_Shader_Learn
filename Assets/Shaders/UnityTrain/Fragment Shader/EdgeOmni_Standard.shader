@@ -2,8 +2,9 @@ Shader "UnityTrain/Fragment/EdgeOmni_Standard" {
     Properties {
 
         _MainColor ("MainColor", Color) = (0, 0, 1, 1)
-        _Scale ("Scale", Range(1, 10)) = 1
+        _Scale ("Scale", float) = 1
         _Outer ("Outer", float) = 0.2
+        [Toggle]_IsOuter ("IsOuter", float) = 1
 
         _Color ("Color", Color) = (1, 1, 1, 1)
         _MainTex ("Albedo", 2D) = "white" { }
@@ -72,6 +73,7 @@ Shader "UnityTrain/Fragment/EdgeOmni_Standard" {
             float4 _MainColor;
             float _Scale;
             float _Outer;
+            bool _IsOuter;
 
             struct v2f {
                 float4 pos : POSITION;
@@ -96,8 +98,12 @@ Shader "UnityTrain/Fragment/EdgeOmni_Standard" {
                 float3 N = normalize(mul(i.normal, unity_WorldToObject));
                 //可使用WorldSpaceViewDir函数
                 float3 V = normalize(_WorldSpaceCameraPos.xyz - mul(unity_ObjectToWorld, i.vertex));
-
-                float b = saturate(dot(N, V));
+                float b;
+                if (_IsOuter) {
+                    b = saturate(dot(N, V));
+                } else {
+                    b = 1 - saturate(dot(N, V));
+                }
 
                 float pb = pow(b, _Scale);
 
@@ -392,7 +398,5 @@ Shader "UnityTrain/Fragment/EdgeOmni_Standard" {
         }
     }
 
-
     FallBack "VertexLit"
-    CustomEditor "StandardShaderGUI"
 }

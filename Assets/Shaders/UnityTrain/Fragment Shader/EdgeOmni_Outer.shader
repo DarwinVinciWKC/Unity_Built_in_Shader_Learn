@@ -3,7 +3,7 @@
 Shader "UnityTrain/Fragment/EdgeOmni_Outer" {
     Properties {
         _MainColor ("MainColor", Color) = (1, 1, 1, 1)
-        _Scale ("Scale", Range(1, 10)) = 1
+        _Scale ("Scale", float) = 1
         _Outer ("Outer", float) = 0.2
         _MainTex ("Texture", 2D) = "white" { }
     }
