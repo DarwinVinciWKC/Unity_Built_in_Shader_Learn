@@ -1,11 +1,14 @@
 Shader "UnityTrain/Fragment/ChangeColor" {
+
     Properties {
         _FirstColor ("FirstColor", COLOR) = (1, 1, 1, 1)
         _SecondColor ("SecondColor", COLOR) = (1, 1, 1, 1)
         _SplitPosition ("SplitPosition", Range(-0.55, 0.55)) = 0
         _Radius ("Radius", Range(0, 0.5)) = 0.2
     }
+
     SubShader {
+
         Pass {
             CGPROGRAM
             #pragma vertex vert
@@ -40,21 +43,19 @@ Shader "UnityTrain/Fragment/ChangeColor" {
 
             fixed4 frag(v2f i) : SV_Target {
 
-                if (i.colY > _SplitPosition + _Radius) {
-                    return _FirstColor;
-                } else if (i.colY > _SplitPosition && i.colY < _SplitPosition + _Radius) {
-                    float distance = i.colY - _SplitPosition;
-                    float lerpValue = 1 - distance / _Radius;
-                    return lerp(_FirstColor, _SecondColor, lerpValue);
-                    //return _FirstColor;
-
-                } else if (i.colY <= _SplitPosition && i.colY > _SplitPosition - _Radius) {
-                    float distance = _SplitPosition - i.colY ;
-                    float lerpValue = 1 - distance / _Radius;
-                    return lerp(_SecondColor, _FirstColor, lerpValue);
-                } else {
-                    return _SecondColor;
-                }
+                //if (i.colY > _SplitPosition + _Radius) {
+                //    return _FirstColor;
+                //} else if (i.colY > _SplitPosition && i.colY < _SplitPosition + _Radius) {
+                //    float distance = i.colY - _SplitPosition;
+                //    float lerpValue = 1 - distance / _Radius - 0.5;//-0.5，保证插值时交界处融合时两个颜色占的比重一致，当distance等于0时，lerpValue为0.5
+                //    return lerp(_FirstColor, _SecondColor, lerpValue);
+                //} else if (i.colY <= _SplitPosition && i.colY > _SplitPosition - _Radius) {
+                //    float distance = _SplitPosition - i.colY ;
+                //    float lerpValue = 1 - distance / _Radius - 0.5;
+                //    return lerp(_SecondColor, _FirstColor, lerpValue);
+                //} else {
+                //    return _SecondColor;
+                //}
 
                 ////比_SplitPosition大的Y值，得到1，反之得到0，经过Lerp()函数后，当值为1时，返回的颜色值为 _FirstColor*(1-1) + _SecondColor*1 = _SecondColor，反之为_FirstColor
                 //float x = i.colY - _SplitPosition;
@@ -66,6 +67,14 @@ Shader "UnityTrain/Fragment/ChangeColor" {
                 //    return _FirstColor;
                 //else
                 //    return _SecondColor;
+
+                float x = i.colY - _SplitPosition;
+                float a = abs(x);
+                x = x / a;
+                float s = a / _Radius;
+                x *= s;
+                x = x / 2 + 0.5f;
+                return lerp(_FirstColor, _SecondColor, x);//重点在于把两个颜色的融合插值控制在[0.5,1]之间
 
             }
             ENDCG
