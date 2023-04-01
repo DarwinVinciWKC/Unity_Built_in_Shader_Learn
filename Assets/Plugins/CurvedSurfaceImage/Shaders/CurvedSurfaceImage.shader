@@ -7,6 +7,8 @@ Shader "UI/CurvedSurfaceImage" {
         LOD 100
 
         Pass {
+            Blend SrcAlpha OneMinusSrcAlpha
+            ZWrite Off
             Cull Off
             CGPROGRAM
             #pragma vertex vert
