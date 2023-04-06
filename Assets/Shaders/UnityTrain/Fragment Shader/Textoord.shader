@@ -31,7 +31,8 @@ Shader "UnityTrain/Fragment/Textoord" {
             }
 
             fixed4 frag(v2f i) : SV_Target {
-                fixed4 col = tex2D(_MainTex, float2(_U, _V));
+                fixed4 col = tex2D(_MainTex, float2(i.uv));//appdata中的texcoord是Mesh中存储的uv信息，固定的，所以我们无法使用Tiling和Offset功能
+                //fixed4 col = tex2D(_MainTex, float2(_U, _V));
                 return col;
             }
             ENDCG
