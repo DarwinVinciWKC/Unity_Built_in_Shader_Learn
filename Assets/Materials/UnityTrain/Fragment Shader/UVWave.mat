@@ -7,8 +7,8 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: UVSin
-  m_Shader: {fileID: 4800000, guid: c6e586a14fc5a7f4ba24846a32f2ea18, type: 3}
+  m_Name: UVWave
+  m_Shader: {fileID: 4800000, guid: 56bd7d8ce80182843954bf01d84a8e4f, type: 3}
   m_ValidKeywords: []
   m_InvalidKeywords: []
   m_LightmapFlags: 4
