@@ -38,11 +38,28 @@ public class Waves : MonoBehaviour
 
     void Update()
     {
-        ProcessWaves();
-        if (Input.GetMouseButtonDown(0))
+        if (Input.GetMouseButton(0))
         {
-            PutDrop((int)wavePoint.x, (int)wavePoint.y);
+            if (GetClickedPoint(out Vector2 pos))
+            {
+                PutDrop((int)pos.x, (int)pos.y);
+            }
         }
+        ProcessWaves();
+    }
+    bool GetClickedPoint(out Vector2 pos)
+    {
+        RaycastHit raycastHit;
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        if (Physics.Raycast(ray, out raycastHit))
+        {
+            var clickedPos = transform.worldToLocalMatrix.MultiplyPoint(raycastHit.point);
+            pos.x = (int)((clickedPos.x + 0.5) * waveWidth);
+            pos.y = (int)((clickedPos.y + 0.5) * waveHeight);
+            return true;
+        }
+        pos = Vector2.zero;
+        return false;
     }
 
     void PutDrop(int x, int y)
