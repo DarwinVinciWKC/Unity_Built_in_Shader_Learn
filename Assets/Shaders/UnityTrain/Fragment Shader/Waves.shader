@@ -1,8 +1,7 @@
 Shader "UnityTrain/Fragment/Waves" {
     Properties {
         _MainTex ("MainTex", 2D) = "white" { }
-        _WaveTex ("WaveTex", 2D) = "black" { }
-        _Intensity ("Intensity", float) = 0.025
+        _Intensity ("Intensity", float) = 0.05
     }
     SubShader {
         Pass {

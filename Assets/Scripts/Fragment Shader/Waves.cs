@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -11,11 +12,21 @@ public class Waves : MonoBehaviour
 
     public float attenuation = 0.0025f;
 
+    public int waveRadius = 20;
+
+    public Vector2 wavePoint = Vector2.zero;
+
     float[,] waveA;
     float[,] waveB;
 
     Texture2D waveTexture;
+
     void Start()
+    {
+        Init();
+    }
+
+    void Init()
     {
         waveA = new float[waveWidth, waveHeight];
         waveB = new float[waveWidth, waveHeight];
@@ -30,20 +41,25 @@ public class Waves : MonoBehaviour
         ProcessWaves();
         if (Input.GetMouseButtonDown(0))
         {
-            PutDrop();
+            PutDrop((int)wavePoint.x, (int)wavePoint.y);
         }
     }
 
-    void PutDrop()
+    void PutDrop(int x, int y)
     {
-        waveA[waveWidth / 2, waveHeight / 2] = 1;
-        waveA[waveWidth / 2 - 1, waveHeight / 2] = 1;
-        waveA[waveWidth / 2 + 1, waveHeight / 2] = 1;
-        waveA[waveWidth / 2, waveHeight / 2 - 1] = 1;
-        waveA[waveWidth / 2, waveHeight / 2 + 1] = 1;
-        waveA[waveWidth / 2 - 1, waveHeight / 2 + 1] = 1;
-        waveA[waveWidth / 2 + 1, waveHeight / 2 + 1] = 1;
-        waveA[waveWidth / 2 + 1, waveHeight / 2 - 1] = 1;
+        float distance;
+        for (int i = -waveRadius; i <= waveRadius; i++)
+        {
+            for (int j = -waveRadius; j <= waveRadius; j++)
+            {
+                if (x + i >= 0 && y + j >= 0 && x + i < waveWidth && y + j < waveHeight)
+                {
+                    distance = MathF.Sqrt(i * i + j * j);
+                    if (distance < waveRadius)
+                        waveA[x + i, y + j] = MathF.Cos(distance * MathF.PI / waveRadius);
+                }
+            }
+        }
     }
 
     void ProcessWaves()
@@ -73,9 +89,6 @@ public class Waves : MonoBehaviour
 
                 var u_offset = (waveB[w - 1, h] - waveB[w + 1, h]) / 2;
                 var v_offset = (waveB[w, h - 1] - waveB[w, h + 1]) / 2;
-
-                //var r = u_offset / 2 + 0.5f;
-                //var g = v_offset / 2 + 0.5f;
 
                 waveTexture.SetPixel(w, h, new Color(u_offset, v_offset, 0));
 
