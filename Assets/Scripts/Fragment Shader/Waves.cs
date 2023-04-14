@@ -1,6 +1,8 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 using UnityEngine;
 
 public class Waves : MonoBehaviour
@@ -14,18 +16,20 @@ public class Waves : MonoBehaviour
 
     public int waveRadius = 20;
 
-    public Vector2 wavePoint = Vector2.zero;
+    public float listenToPutDropIntervalTime;
 
     float[,] waveA;
     float[,] waveB;
 
     Texture2D waveTexture;
 
+    int sleepTime;
+    Color[] colorBuffer;
+    bool isRun = true;
     void Start()
     {
         Init();
     }
-
     void Init()
     {
         waveA = new float[waveWidth, waveHeight];
@@ -34,18 +38,40 @@ public class Waves : MonoBehaviour
         waveTexture = new Texture2D(waveWidth, waveHeight);
 
         GetComponent<MeshRenderer>().material.SetTexture(shaderTextureName, waveTexture);
-    }
 
+        Thread thread = new Thread(ProcessWaves);
+        thread.Start();
+
+        colorBuffer = new Color[waveWidth * waveHeight];
+
+        StartCoroutine(ListenToPutDrop(listenToPutDropIntervalTime));
+    }
     void Update()
     {
-        if (Input.GetMouseButton(0))
+        sleepTime = (int)(Time.deltaTime * 1000);
+
+        waveTexture.SetPixels(colorBuffer);
+        waveTexture.Apply();
+    }
+    IEnumerator ListenToPutDrop(float intervalTime)
+    {
+        Vector3 lastPostion = Vector3.zero;
+        while (isRun)
         {
-            if (GetClickedPoint(out Vector2 pos))
+            if (Input.GetMouseButton(0))
             {
-                PutDrop((int)pos.x, (int)pos.y);
+                if (GetClickedPoint(out Vector2 pos))
+                {
+                    if (lastPostion != Input.mousePosition)
+                    {
+                        lastPostion = Input.mousePosition;
+                        PutDrop((int)pos.x, (int)pos.y);
+                    }
+                    yield return new WaitForSeconds(intervalTime);
+                }
             }
+            yield return null;
         }
-        ProcessWaves();
     }
     bool GetClickedPoint(out Vector2 pos)
     {
@@ -61,7 +87,6 @@ public class Waves : MonoBehaviour
         pos = Vector2.zero;
         return false;
     }
-
     void PutDrop(int x, int y)
     {
         float distance;
@@ -78,46 +103,50 @@ public class Waves : MonoBehaviour
             }
         }
     }
-
     void ProcessWaves()
     {
-
-        for (int w = 1; w < waveWidth - 1; w++)
+        while (isRun)
         {
-            for (int h = 1; h < waveHeight - 1; h++)
+            for (int w = 1; w < waveWidth - 1; w++)
             {
-                waveB[w, h] =
-                    (
-                    waveA[w + 1, h] +
-                    waveA[w - 1, h] +
-                    waveA[w, h + 1] +
-                    waveA[w, h - 1] +
-                    waveA[w - 1, h + 1] +
-                    waveA[w - 1, h - 1] +
-                    waveA[w + 1, h + 1] +
-                    waveA[w + 1, h - 1]
-                    )
-                    / 4 - waveB[w, h];
+                for (int h = 1; h < waveHeight - 1; h++)
+                {
+                    waveB[w, h] =
+                        (
+                        waveA[w + 1, h] +
+                        waveA[w - 1, h] +
+                        waveA[w, h + 1] +
+                        waveA[w, h - 1] +
+                        waveA[w - 1, h + 1] +
+                        waveA[w - 1, h - 1] +
+                        waveA[w + 1, h + 1] +
+                        waveA[w + 1, h - 1]
+                        )
+                        / 4 - waveB[w, h];
 
-                if (waveB[w, h] < -1)
-                    waveB[w, h] = -1;
-                if (waveB[w, h] > 1)
-                    waveB[w, h] = 1;
+                    if (waveB[w, h] < -1)
+                        waveB[w, h] = -1;
+                    if (waveB[w, h] > 1)
+                        waveB[w, h] = 1;
 
-                var u_offset = (waveB[w - 1, h] - waveB[w + 1, h]) / 2;
-                var v_offset = (waveB[w, h - 1] - waveB[w, h + 1]) / 2;
+                    var u_offset = (waveB[w - 1, h] - waveB[w + 1, h]) / 2;
+                    var v_offset = (waveB[w, h - 1] - waveB[w, h + 1]) / 2;
 
-                waveTexture.SetPixel(w, h, new Color(u_offset, v_offset, 0));
+                    colorBuffer[w + waveHeight * h] = new Color(u_offset, v_offset, 0);
 
-                waveB[w, h] -= waveB[w, h] * attenuation;
+                    waveB[w, h] -= waveB[w, h] * attenuation;
+                }
             }
+
+            float[,] temp = waveA;
+            waveA = waveB;
+            waveB = temp;
+
+            Thread.Sleep(sleepTime);
         }
-
-        waveTexture.Apply();
-
-        float[,] temp = waveA;
-        waveA = waveB;
-        waveB = temp;
-
+    }
+    void OnDisable()
+    {
+        isRun = false;
     }
 }

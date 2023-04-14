@@ -28,7 +28,6 @@ Shader "UnityTrain/Fragment/Waves" {
             }
 
             fixed4 frag(v2f i) : SV_Target {
-
                 float2 waveUV = tex2D(_WaveTex, i.uv).xy;
                 waveUV *= _Intensity;
                 i.uv += waveUV;
