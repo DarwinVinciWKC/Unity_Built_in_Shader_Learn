@@ -56,7 +56,7 @@ Shader "UnityTrain/Lighting/Diffuse" {
 
                 // Used in Vertex pass: Calculates diffuse lighting from lightCount lights. Specifying true to spotLight is more expensive
                 // to calculate but lights are treated as spot lights otherwise they are treated as point lights.
-                //o.col.rgb = ShadeVertexLights(v.vertex, v.normal);//Vertex，UnityCG.cginc中光照的辅助函数，SH，效率高但效果一半的光照模拟
+                //o.col.rgb = ShadeVertexLights(v.vertex, v.normal);//Vertex，UnityCG.cginc中光照的辅助函数，SH，效率高但效果一般的光照模拟
                 float4 wpos = mul(unity_ObjectToWorld, v.vertex);
                 // Used in ForwardBase pass: Calculates diffuse lighting from 4 point lights, with data packed in a special way.//课时45
                 o.col.rgb += Shade4PointLights

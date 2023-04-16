@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ImgToGrayscaleImg : MonoBehaviour
+public class CreateNormal : MonoBehaviour
 {
     public Texture2D texture1;//需要开启Advanced中的Read/Write权限
     public Texture2D texture2;//需要开启Advanced中的Read/Write权限，将Format改成RGB格式中的一种
@@ -30,6 +30,7 @@ public class ImgToGrayscaleImg : MonoBehaviour
                 float z = c.z * 0.5f + 0.5f;
 
                 texture2.SetPixel(i, j, new Color(x, y, z));
+                //texture2.SetPixel(i, j, new Color(0, y, 0, x));
             }
         }
         texture2.Apply(false);
