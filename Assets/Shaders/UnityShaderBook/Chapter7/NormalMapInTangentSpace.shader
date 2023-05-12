@@ -65,6 +65,7 @@ Shader "Unity Shader Book/Chapter 7/Normal Map In Tangent Space" {
                 fixed3 tangentNormal = UnpackNormal(packedNormal);
                 tangentNormal.xy*=_BumpScale;
                 tangentNormal.z=sqrt(1.0-saturate(dot(tangentNormal.xy,tangentNormal.xy)));
+
                 fixed3 albedo = tex2D(_MainTex, i.uv).rgb * _Color.rgb;
                 fixed3 ambient = UNITY_LIGHTMODEL_AMBIENT.xyz*albedo;
                 fixed3 diffuse = _LightColor0.xyz * albedo * max(0, dot(tangentNormal, tangentLightDir));

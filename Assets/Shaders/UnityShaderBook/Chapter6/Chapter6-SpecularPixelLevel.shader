@@ -13,6 +13,7 @@ Shader "Unity Shader Book/Chapter 6/Specular Pixel-Level" {
             CGPROGRAM
             #pragma vertex vert
             #pragma fragment frag
+            //#pragma multi_compile_fwdbase
 
             #include "UnityCG.cginc"
             #include "Lighting.cginc"
@@ -46,7 +47,7 @@ Shader "Unity Shader Book/Chapter 6/Specular Pixel-Level" {
                 float d = saturate(dot(i.worldNormal, lightDirection));
 
                 fixed3 ambient = UNITY_LIGHTMODEL_AMBIENT.xyz;
-                fixed3 diffuse = _Diffuse.xyz * _LightColor0.xyz * d;
+                fixed3 diffuse =_Diffuse.xyz * _Diffuse.xyz * _LightColor0.xyz * d;
 
                 float3 reflectDir = normalize(reflect(-lightDirection, i.worldNormal));
                 float3 viewDir = normalize(_WorldSpaceCameraPos.xyz - i.worldPos.xyz);
